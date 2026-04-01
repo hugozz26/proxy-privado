@@ -71,7 +71,7 @@ httpServer.on('upgrade', (req, socket, head) => {
     }
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.SERVER_PORT || process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
   console.log(`🚀 Ultraviolet Bare server running on http://localhost:${PORT}`);
 });
