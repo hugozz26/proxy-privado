@@ -4,3 +4,7 @@ firebase-key.json
 client/node_modules/
 client/dist/
 c:\Users\hugod\Downloads\proxy\client\.env
+node_modules/
+.env
+dist/
+
