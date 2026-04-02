@@ -26,17 +26,15 @@ const ProxyCard = () => {
       }
 
       if ('serviceWorker' in navigator) {
-        setResult('Verificando Service Worker de seguran�a...');
-        
+        setResult('Verificando Service Worker...');
         let registration = await navigator.serviceWorker.getRegistration();
-          if (!registration) {
-            registration = await navigator.serviceWorker.register('/sw.js', { scope: window.__uv$config.prefix });
-            if (registration.installing) {
-              await new Promise(resolve => registration.installing.addEventListener('statechange', e => { if (e.target.state === 'activated') resolve(true); }));
-            }
+        if (!registration) {
+          registration = await navigator.serviceWorker.register('/sw.js', { scope: window.__uv$config.prefix });
+          if (registration.installing) {
+            await new Promise(resolve => registration.installing.addEventListener('statechange', (e: any) => { if (e.target.state === 'activated') resolve(true); }));
           }
-          await navigator.serviceWorker.ready;
-          await new Promise(r => setTimeout(r, 500));
+        }
+        await new Promise(r => setTimeout(r, 500));
       }
 
       const encoded = window.__uv$config.encodeUrl(actualNormalUrl);
@@ -105,4 +103,5 @@ const ProxyCard = () => {
 };
 
 export default ProxyCard;
+
 
