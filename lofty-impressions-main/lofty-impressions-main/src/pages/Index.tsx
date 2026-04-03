@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProxyCard from "@/components/ProxyCard";
+import TokenGeneratorCard from "@/components/TokenGeneratorCard";
 import DownloaderCard from "@/components/DownloaderCard";
 import ActivityTable from "@/components/ActivityTable";
 import { Shield, Zap, Server } from "lucide-react";
@@ -46,6 +47,7 @@ const Index = () => {
         {/* Tools */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ProxyCard />
+          <TokenGeneratorCard />
           <DownloaderCard />
         </div>
 

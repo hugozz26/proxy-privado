@@ -1,0 +1,103 @@
+import { useState } from "react";
+import { Key, Download, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { db, auth } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
+
+const TokenGeneratorCard = () => {
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleGenerateToken = async () => {
+    setLoading(true);
+    setToken(null);
+    try {
+      // Pega o usuário logado se existir, senão usa 'anonimo'
+      const user = auth.currentUser;
+      const uid = user ? user.uid : "anonimo_desktop";
+
+      // Vamo gerar uma chave aleatória de 6 dígitos tipo NETFLIX (Ex: 9XF8A1)
+      const tokenAleatorio = Math.random().toString(36).substring(2, 8).toUpperCase();
+      
+      // Expira em 2 horas cravadas!
+      const duasHorasMs = 2 * 60 * 60 * 1000;
+      const validade = Date.now() + duasHorasMs;
+
+      // Montando o documento no Firestore
+      await setDoc(doc(db, "proxy_tokens", tokenAleatorio), {
+        createdAt: Date.now(),
+        expiresAt: validade,
+        ipVinculado: null, // Deixa null! Assim quem usar o .exe amarrotara seu IP aqui!
+        usuarioID: uid,
+      });
+
+      setToken(tokenAleatorio);
+      toast({
+        title: "Acesso Gerado com Sucesso!",
+        description: "Copie seu token para usar no .exe da escola.",
+        duration: 5000,
+      });
+
+    } catch (e: any) {
+      toast({
+        title: "Erro ao gerar token",
+        description: e.message || "Erro desconhecido",
+        variant: "destructive",
+      });
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="glass-panel p-6 rounded-2xl flex flex-col items-start gap-4">
+      <div className="flex items-center gap-2 mb-2 text-foreground font-medium">
+        <Key className="h-5 w-5 text-primary" />
+        Proxy de Sistema Inteiro (.exe)
+      </div>
+      
+      <p className="text-sm text-muted-foreground w-full">
+        Drible qualquer bloqueio da sua escola (inclusive jogos) com o proxy para Windows. 
+        Esse sistema encripta todo o PC e vincula a internet via Cloudflare. O token gerado dura 2 horas e trava no primeiro PC que conectar (anti-compartilhamento).
+      </p>
+
+      {token && (
+        <div className="w-full bg-secondary border border-border p-4 rounded-xl flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground">Seu Token Secreto:</span>
+              <span className="font-mono text-xl text-primary font-bold tracking-widest">{token}</span>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                navigator.clipboard.writeText(token);
+                toast({ title: "Copiado!", duration: 2000 });
+              }}>
+              Copiar
+            </Button>
+        </div>
+      )}
+
+      <div className="flex gap-3 w-full sm:w-auto mt-2">
+        <Button onClick={handleGenerateToken} disabled={loading} className="gap-2">
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Key className="h-4 w-4" />}
+          Gerar Token de Acesso (2H)
+        </Button>
+        
+        <Button variant="secondary" className="gap-2 cursor-pointer" asChild>
+          {/* Se você tiver baixado o client-escola.exe, coloque ele na pasta public/ do seu site */}
+          <a href="/client-escola.exe" download="client-escola.exe">
+              <Download className="h-4 w-4" />
+              Baixar .exe
+          </a>
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default TokenGeneratorCard;
