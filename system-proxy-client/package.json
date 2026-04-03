@@ -1,11 +1,11 @@
 {
   "name": "proxy-cliente-escola",
   "version": "1.0.0",
-  "description": "Cliente proxy local que conecta na Wispbyte e muda proxy do Windows",
+  "description": "Cliente proxy local para roteamento de rede via Cloudflare",
   "main": "client.js",
   "scripts": {
     "start": "node client.js",
-    "build": "pkg . --targets node18-win-x64 --output client-escola.exe"
+    "build": "pkg . --targets node18-win-x64 --output GhostProxy.exe"
   },
   "dependencies": {
     "ws": "^8.16.0"

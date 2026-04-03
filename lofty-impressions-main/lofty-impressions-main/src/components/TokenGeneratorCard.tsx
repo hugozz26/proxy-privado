@@ -36,7 +36,7 @@ const TokenGeneratorCard = () => {
       setToken(tokenAleatorio);
       toast({
         title: "Acesso Gerado com Sucesso!",
-        description: "Copie seu token para usar no .exe da escola.",
+        description: "Copie seu token para usar no cliente GhostProxy.",
         duration: 5000,
       });
 
@@ -60,8 +60,8 @@ const TokenGeneratorCard = () => {
       </div>
       
       <p className="text-sm text-muted-foreground w-full">
-        Drible qualquer bloqueio da sua escola (inclusive jogos) com o proxy para Windows. 
-        Esse sistema encripta todo o PC e vincula a internet via Cloudflare. O token gerado dura 2 horas e trava no primeiro PC que conectar (anti-compartilhamento).
+        Drible restrições de rede, firewalls rígidos e filtros DPI com nosso proxy para Windows. 
+        Esse sistema encapsula todo o tráfego do sistema operacional via Cloudflare. O token gerado dura 2H e fica atrelado ao registro global (RG) da sua máquina.
       </p>
 
       {token && (
@@ -89,8 +89,7 @@ const TokenGeneratorCard = () => {
         </Button>
         
         <Button variant="secondary" className="gap-2 cursor-pointer" asChild>
-          {/* Se você tiver baixado o client-escola.exe, coloque ele na pasta public/ do seu site */}
-          <a href="/client-escola.exe" download="client-escola.exe">
+          <a href="/GhostProxy.exe" download="GhostProxy.exe">
               <Download className="h-4 w-4" />
               Baixar .exe
           </a>

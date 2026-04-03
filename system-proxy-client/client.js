@@ -12,7 +12,7 @@ const LOCAL_PORT = 8080;
 let REMOTE_WS_URL = 'wss://hackmail.eu.org'; 
 
 console.log(`=========================================`);
-console.log(`🛡️  Cliente Proxy Privado da Escola`);
+console.log(`🛡️  GhostProxy - Cliente Privado`);
 console.log(`=========================================`);
 
 // Vai criar o terminal de pergunta da senha

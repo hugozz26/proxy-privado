@@ -36,7 +36,7 @@ const wss = new WebSocket.Server({
     verifyClient: async (info, callback) => {
         const params = new URL(info.req.url, `http://${info.req.headers.host}`).searchParams;
         const clientToken = params.get('token');
-        const clientRG = params.get('rg'); // O 'RG' do computador enviado pelo nosso .exe
+        const clientRG = params.get('rg'); // O 'RG' do computador 
         
         const clienteIp = info.req.headers['cf-connecting-ip'] || info.req.headers['x-forwarded-for'];
         const agora = Date.now();
