@@ -69,11 +69,11 @@ const Index = () => {
 
         {/* Tools */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {isAdmin && (
-            <div className="space-y-6">
-              <ProxyCard />
-              {/* Seção Sandbox de Admin */}
-              <div className="p-6 rounded-2xl border border-border bg-card shadow-sm glow-purple glow-border-purple">
+          <div className="space-y-6">
+            <ProxyCard />
+            
+            {isAdmin && (
+              <div className="p-6 rounded-2xl border border-border bg-card shadow-sm glow-purple glow-border-purple mt-6">
                 <h3 className="text-xl font-bold flex items-center gap-2 mb-2">
                   <Shield className="h-6 w-6 text-primary" />
                   Ferramentas SandBox (Admin)
@@ -86,8 +86,8 @@ const Index = () => {
                   Baixar Meu_sandbox_pratico.zip
                 </a>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           <TokenGeneratorCard />
           <DownloaderCard />
         </div>
