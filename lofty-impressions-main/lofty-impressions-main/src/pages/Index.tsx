@@ -1,12 +1,35 @@
 import { Helmet } from "react-helmet-async";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProxyCard from "@/components/ProxyCard";
 import TokenGeneratorCard from "@/components/TokenGeneratorCard";
 import DownloaderCard from "@/components/DownloaderCard";
 import ActivityTable from "@/components/ActivityTable";
 import { Shield, Zap, Server } from "lucide-react";
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const Index = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const docRef = doc(db, "admin_users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setIsAdmin(true);
+          }
+        } catch (e) {
+          console.error("Erro ao checar admin:", e);
+        }
+      }
+    };
+    checkAdmin();
+  }, []);
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -46,7 +69,25 @@ const Index = () => {
 
         {/* Tools */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ProxyCard />
+          {isAdmin && (
+            <div className="space-y-6">
+              <ProxyCard />
+              {/* Seção Sandbox de Admin */}
+              <div className="p-6 rounded-2xl border border-border bg-card shadow-sm glow-purple glow-border-purple">
+                <h3 className="text-xl font-bold flex items-center gap-2 mb-2">
+                  <Shield className="h-6 w-6 text-primary" />
+                  Ferramentas SandBox (Admin)
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Acesso liberado apenas para contas com privilégio de administrador. Baixe o pacote de testes para uso no ambiente local.
+                </p>
+                <a href="/Meu_sandbox_pratico.zip" download className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary leading-none text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full gap-2">
+                  <Zap className="h-4 w-4" />
+                  Baixar Meu_sandbox_pratico.zip
+                </a>
+              </div>
+            </div>
+          )}
           <TokenGeneratorCard />
           <DownloaderCard />
         </div>
