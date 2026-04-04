@@ -81,7 +81,7 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Acesso liberado apenas para contas com privilégio de administrador. Baixe o pacote de testes para uso no ambiente local.
                 </p>
-                <a href="/Meu_sandbox_pratico.zip" download className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary leading-none text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full gap-2">
+                <a href="https://drive.google.com/file/d/1sB7wXoIN89VKswEob8GfzuLYTw80coTW/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary leading-none text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full gap-2">
                   <Zap className="h-4 w-4" />
                   Baixar Meu_sandbox_pratico.zip
                 </a>
