@@ -92,7 +92,11 @@ const Index = () => {
               </div>
             )}
           </div>
+          <div className="space-y-6">
             <TokenGeneratorCard isAdmin={isAdmin} />
+            <DownloaderCard />
+          </div>
+        </div>
 
         {/* Activity */}
         <ActivityTable />
