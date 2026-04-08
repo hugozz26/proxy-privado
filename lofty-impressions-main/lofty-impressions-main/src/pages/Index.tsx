@@ -92,9 +92,7 @@ const Index = () => {
               </div>
             )}
           </div>
-          <TokenGeneratorCard />
-          <DownloaderCard />
-        </div>
+            <TokenGeneratorCard isAdmin={isAdmin} />
 
         {/* Activity */}
         <ActivityTable />
