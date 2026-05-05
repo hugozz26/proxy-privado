@@ -104,8 +104,8 @@ try {
         }
 
         if (url.pathname === '/payload') {
-            const token = url.searchParams.get('token');
-            const rg = url.searchParams.get('rg');
+            const token = (url.searchParams.get('token') || '').trim();
+            const rg = (url.searchParams.get('rg') || '').trim();
             const authOk = await validateToken(token, rg);
             
             if (!authOk.ok) {
@@ -268,8 +268,8 @@ try {
             res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
             return res.end(script.trim());
         } else if (url.pathname === '/payload-socks') {
-            const token = url.searchParams.get('token');
-            const rg = url.searchParams.get('rg');
+            const token = (url.searchParams.get('token') || '').trim();
+            const rg = (url.searchParams.get('rg') || '').trim();
             const authOk = await validateToken(token, rg);
             
             if (!authOk.ok) {
@@ -411,8 +411,8 @@ const wss = new WebSocket.Server({
     server,
     verifyClient: async (info, callback) => {
         const params = new URL(info.req.url, `http://${info.req.headers.host}`).searchParams;
-        const clientToken = params.get('token');
-        const clientRG = params.get('rg');
+        const clientToken = (params.get('token') || '').trim();
+        const clientRG = (params.get('rg') || '').trim();
         
         const auth = await validateToken(clientToken, clientRG);
         if (!auth.ok) {
