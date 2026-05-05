@@ -1,10 +1,10 @@
-const http = require('http');
+﻿const http = require('http');
 const WebSocket = require('ws');
 const net = require('net');
 const admin = require('firebase-admin');
 
-// 1. INICIALIZE O FIREBASE COM A SUA CHAVE SECRETA (Você precisa baixar o serviceAccountKey.json do Firebase)
-// No Firebase vá em: Configurações do Projeto -> Contas de Serviço -> Gerar Nova Chave Privada
+// 1. INICIALIZE O FIREBASE COM A SUA CHAVE SECRETA (VocÃª precisa baixar o serviceAccountKey.json do Firebase)
+// No Firebase vÃ¡ em: ConfiguraÃ§Ãµes do Projeto -> Contas de ServiÃ§o -> Gerar Nova Chave Privada
 // Jogue o arquivo na Wispbyte e troque o nome abaixo:
 let db = null;
 try {
@@ -13,22 +13,22 @@ try {
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
         });
-        console.log("🔥 Firebase Firestore conectado com Sucesso!");
+        console.log("ðŸ”¥ Firebase Firestore conectado com Sucesso!");
         db = admin.firestore();
     } else {
-        console.log("⚠️ Passando sem firebase! Apenas para dev local.");
+        console.log("âš ï¸ Passando sem firebase! Apenas para dev local.");
     }
 } catch (e) {
-    console.error("❌ ERRO GRAVE: Você não colocou o serviceAccountKey.json na pasta do servidor Wispbyte!", e.message);
+    console.error("âŒ ERRO GRAVE: VocÃª nÃ£o colocou o serviceAccountKey.json na pasta do servidor Wispbyte!", e.message);
 }
 
-// Na Wispbyte, os painéis Pterodactyl geralmente usam SERVER_PORT
+// Na Wispbyte, os painÃ©is Pterodactyl geralmente usam SERVER_PORT
 const port = process.env.SERVER_PORT || process.env.PORT || 8080;
 
-// LISTA BRANCA DE PCs AUTORIZADOS (In-Memory Cache para não travar o Firebase)
+// LISTA BRANCA DE PCs AUTORIZADOS (In-Memory Cache para nÃ£o travar o Firebase)
 const pcAutorizados = new Map();
 
-// Função de Validação Unificada (Usada pelo WebSocket e pelo Stager HTTP)
+// FunÃ§Ã£o de ValidaÃ§Ã£o Unificada (Usada pelo WebSocket e pelo Stager HTTP)
 async function validateToken(clientToken, clientRG) {
     if (!db) {
         // Modo DEV local (ignora DB)
@@ -86,16 +86,16 @@ const server = http.createServer(async (req, res) => {
 $hostUrl = "${httpProto}://${hostUrl}"
 Clear-Host
 Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host "🛡️ GhostProxy - PS1 Injector In-Memory" -ForegroundColor Cyan
+Write-Host "ðŸ›¡ï¸ GhostProxy - PS1 Injector In-Memory" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
-$token = Read-Host "🔑 Digite seu Token"
+$token = Read-Host "ðŸ”‘ Digite seu Token"
 $rg = [BitConverter]::ToString([System.Text.Encoding]::UTF8.GetBytes($env:COMPUTERNAME + "-" + $env:USERNAME)).Replace("-","").ToLower()
-Write-Host "⏳ Autenticando PC [$rg]..." -ForegroundColor Yellow
+Write-Host "â³ Autenticando PC [$rg]..." -ForegroundColor Yellow
 try {
     $payload = Invoke-RestMethod -Uri "$hostUrl/payload?token=$token&rg=$rg" -UseBasicParsing -ErrorAction Stop
     Invoke-Expression $payload
 } catch {
-    Write-Host "❌ Falha na autenticação ou token expirado." -ForegroundColor Red
+    Write-Host "âŒ Falha na autenticaÃ§Ã£o ou token expirado." -ForegroundColor Red
     Start-Sleep -Seconds 5
 }
 `;
@@ -168,7 +168,7 @@ public class GhostCore {
                 if (!string.IsNullOrEmpty(target)) {
                     using (ClientWebSocket ws = new ClientWebSocket()) {
                         ws.Options.KeepAliveInterval = TimeSpan.FromSeconds(25);
-                        ws.Options.Proxy = new WebProxy(); // Não passa pela própria VPN infinita
+                        ws.Options.Proxy = new WebProxy(); // NÃ£o passa pela prÃ³pria VPN infinita
                         await ws.ConnectAsync(new Uri(wsUrl), CancellationToken.None);
                         
                         if (isConnect) {
@@ -220,20 +220,20 @@ public class GhostCore {
 try {
     Add-Type -TypeDefinition $code -Language CSharp
 } catch {
-    # Suprime erros caso já injetado na mesma sessão
+    # Suprime erros caso jÃ¡ injetado na mesma sessÃ£o
 }
-Write-Host "✅ Acesso Autorizado! Payload Injetado na memoria..." -ForegroundColor Green
+Write-Host "âœ… Acesso Autorizado! Payload Injetado na memoria..." -ForegroundColor Green
 
 [Console]::TreatControlCAsInput = $true
 $reg = "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
 
 try {
-    Write-Host "⚙️  Ativando Proxy no Sistema (127.0.0.1:8080)" -ForegroundColor Yellow
+    Write-Host "âš™ï¸  Ativando Proxy no Sistema (127.0.0.1:8080)" -ForegroundColor Yellow
     Set-ItemProperty -Path $reg -Name ProxyEnable -Value 1
     Set-ItemProperty -Path $reg -Name ProxyServer -Value "127.0.0.1:8080"
     Set-ItemProperty -Path $reg -Name ProxyOverride -Value "localhost;127.0.0.1;<local>;${hostUrl}"
     
-    Write-Host "📡 Proxy In-Memory Rodando! Pressione QUALQUER TECLA para sair limpo." -ForegroundColor Cyan
+    Write-Host "ðŸ“¡ Proxy In-Memory Rodando! Pressione QUALQUER TECLA para sair limpo." -ForegroundColor Cyan
     
     $task = [GhostCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) {
@@ -241,27 +241,29 @@ try {
     }
     $null = [Console]::ReadKey($true) # Consume a tecla
 } finally {
-    Write-Host "\`n🛑 Limpando rastros e Restaurando Proxy..." -ForegroundColor Yellow
+    Write-Host "\`nðŸ›‘ Limpando rastros e Restaurando Proxy..." -ForegroundColor Yellow
     Set-ItemProperty -Path $reg -Name ProxyEnable -Value 0
     Remove-ItemProperty -Path $reg -Name ProxyOverride -ErrorAction SilentlyContinue
-    Write-Host "✅ Limpo! Pode fechar a janela." -ForegroundColor Green
+    Write-Host "âœ… Limpo! Pode fechar a janela." -ForegroundColor Green
 }
             `;
-        } else if (url.pathname === '/stager-socks.ps1') {
+        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+              return res.end(csharpCode.trim());
+          } else if (url.pathname === '/stager-socks.ps1') {
             const script = `
 $hostUrl = "${httpProto}://${hostUrl}"
 Clear-Host
 Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host "🎮 GhostProxy - RED TEAM SOCKS5 (STEAM E JOGOS)" -ForegroundColor Cyan
+Write-Host "ðŸŽ® GhostProxy - RED TEAM SOCKS5 (STEAM E JOGOS)" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
-$token = Read-Host "🔑 Digite seu Token"
+$token = Read-Host "ðŸ”‘ Digite seu Token"
 $rg = [BitConverter]::ToString([System.Text.Encoding]::UTF8.GetBytes($env:COMPUTERNAME + "-" + $env:USERNAME)).Replace("-","").ToLower()
-Write-Host "⏳ Autenticando PC [$rg]..." -ForegroundColor Yellow
+Write-Host "â³ Autenticando PC [$rg]..." -ForegroundColor Yellow
 try {
     $payload = Invoke-RestMethod -Uri "$hostUrl/payload-socks?token=$token&rg=$rg" -UseBasicParsing -ErrorAction Stop
     Invoke-Expression $payload
 } catch {
-    Write-Host "❌ Falha na autenticação ou token expirado." -ForegroundColor Red
+    Write-Host "âŒ Falha na autenticaÃ§Ã£o ou token expirado." -ForegroundColor Red
     Start-Sleep -Seconds 5
 }
 `;
@@ -358,7 +360,7 @@ public class GhostSocksCore {
                     await Task.WhenAny(t1, t2);
                 }
             }
-        } catch { } // Ignora erros de target (conexão fechada)
+        } catch { } // Ignora erros de target (conexÃ£o fechada)
     }
     static async Task StreamToWs(NetworkStream stream, ClientWebSocket ws) {
         byte[] buffer = new byte[8192 * 4];
@@ -383,17 +385,17 @@ public class GhostSocksCore {
 '@
 
 try { Add-Type -TypeDefinition $code -Language CSharp } catch {}
-Write-Host "✅ SOCKS5 Habilitado na porta 1080!" -ForegroundColor Green
+Write-Host "âœ… SOCKS5 Habilitado na porta 1080!" -ForegroundColor Green
 
 [Console]::TreatControlCAsInput = $true
 try {
-    Write-Host "⚙️  Abra o Proxifier, adicione o Proxy Local -> 127.0.0.1:1080 (SOCKS5)" -ForegroundColor Yellow
-    Write-Host "📡 Aguardando conexões do Proxifier... Pressione QUALQUER TECLA para sair." -ForegroundColor Cyan
+    Write-Host "âš™ï¸  Abra o Proxifier, adicione o Proxy Local -> 127.0.0.1:1080 (SOCKS5)" -ForegroundColor Yellow
+    Write-Host "ðŸ“¡ Aguardando conexÃµes do Proxifier... Pressione QUALQUER TECLA para sair." -ForegroundColor Cyan
     
     $task = [GhostSocksCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) { Start-Sleep -Milliseconds 200 }
     $null = [Console]::ReadKey($true)
-} finally { Write-Host "\`n🛑 Encerrando SOCKS5..." -ForegroundColor Yellow }
+} finally { Write-Host "\`nðŸ›‘ Encerrando SOCKS5..." -ForegroundColor Yellow }
 `;
             res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
             return res.end(csharpCode.trim());
@@ -416,7 +418,7 @@ const wss = new WebSocket.Server({
         
         const auth = await validateToken(clientToken, clientRG);
         if (!auth.ok) {
-            console.log(`[Segurança] 🔴 Bloqueado: ${auth.msg}`);
+            console.log(`[SeguranÃ§a] ðŸ”´ Bloqueado: ${auth.msg}`);
             return callback(false, 401, auth.msg);
         }
         callback(true);
@@ -430,7 +432,7 @@ wss.on('connection', (ws, req) => {
     ws.once('message', (msg) => {
         const command = msg.toString();
         
-        // Suporte para 2 Versões (V1 = Cliente Antigo .exe | V2 = Memory PowerShell)
+        // Suporte para 2 VersÃµes (V1 = Cliente Antigo .exe | V2 = Memory PowerShell)
         if (command.startsWith('CONNECT ') || command.startsWith('CONNECTV2 ')) {
             const isV2 = command.startsWith('CONNECTV2 ');
             const params = isV2 ? command.substring(10) : command.substring(8);
@@ -441,13 +443,13 @@ wss.on('connection', (ws, req) => {
 
             // Conecta no site de destino (ex: Google, Discord, Youtube, Steam)
             targetSocket = net.createConnection(targetPort, host, () => {
-                // GAME MODE: Envia as conexões sem esperar (Nagle OFF)
+                // GAME MODE: Envia as conexÃµes sem esperar (Nagle OFF)
                 targetSocket.setNoDelay(true);
                 targetSocket.setKeepAlive(true, 1000);
-                if (!isV2) ws.send('CONNECTED'); // V1 exige, V2 não mistura lixo no stream
+                if (!isV2) ws.send('CONNECTED'); // V1 exige, V2 nÃ£o mistura lixo no stream
             });
 
-            // Variável pra evitar criar múltiplos checks e travar a CPU/Velocidade
+            // VariÃ¡vel pra evitar criar mÃºltiplos checks e travar a CPU/Velocidade
             let taPausado = false;
 
             // Tudo que voltar da internet, repassa pro WebSocket da escola
@@ -470,7 +472,7 @@ wss.on('connection', (ws, req) => {
                                 taPausado = false;
                                 targetSocket.resume();
                             }
-                        }, 20); // Checa mais rapido (20ms) pra não "engasgar" a Steam
+                        }, 20); // Checa mais rapido (20ms) pra nÃ£o "engasgar" a Steam
                     }
                 }
             });
@@ -502,13 +504,13 @@ wss.on('connection', (ws, req) => {
                 }
             });
         } else {
-            // Se alguém tentar mandar baboseira, fecha (proteção)
+            // Se alguÃ©m tentar mandar baboseira, fecha (proteÃ§Ã£o)
             ws.close();
         }
     });
 
-    // Cloudflare derruba conexões inativas após 100 segundos.
-    // Pra Steam fical online, precisamos responder aos Pings de Manutenção!
+    // Cloudflare derruba conexÃµes inativas apÃ³s 100 segundos.
+    // Pra Steam fical online, precisamos responder aos Pings de ManutenÃ§Ã£o!
     ws.isAlive = true;
     ws.on('pong', () => { ws.isAlive = true; });
 
@@ -517,12 +519,12 @@ wss.on('connection', (ws, req) => {
     });
     
     ws.on('error', (err) => {
-       // Ocultamos erros pequenos comuns pra não floodar o terminal
+       // Ocultamos erros pequenos comuns pra nÃ£o floodar o terminal
        // console.error('[Erro no WebSocket]', err.message);
     });
 });
 
-// A cada 30 segundos, joga um Ping na conexão. Se não responder em 30s, Cloudflare caiu.
+// A cada 30 segundos, joga um Ping na conexÃ£o. Se nÃ£o responder em 30s, Cloudflare caiu.
 const intervalPing = setInterval(() => {
     wss.clients.forEach((ws) => {
         if (ws.isAlive === false) return ws.terminate();
@@ -537,7 +539,7 @@ wss.on('close', () => {
 
 server.listen(port, () => {
     console.log(`=========================================`);
-    console.log(`🚀 Servidor Tunnel WebSocket Iniciado!`);
-    console.log(`📡 Porta: ${port}`);
+    console.log(`ðŸš€ Servidor Tunnel WebSocket Iniciado!`);
+    console.log(`ðŸ“¡ Porta: ${port}`);
     console.log(`=========================================`);
 });
