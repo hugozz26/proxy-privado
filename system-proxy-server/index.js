@@ -38,8 +38,15 @@ function startTorDaemon() {
 
     console.log('[Tor] Iniciando servico Tor na porta 9050...');
     
+    const torDir = path.dirname(torBinary);
+    const customEnv = {
+        ...process.env,
+        LD_LIBRARY_PATH: torDir + (process.env.LD_LIBRARY_PATH ? path.delimiter + process.env.LD_LIBRARY_PATH : '')
+    };
+
     const torProcess = spawn(torBinary, ['-f', torrcPath], {
-        stdio: ['ignore', 'pipe', 'pipe']
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: customEnv
     });
 
     torProcess.stdout.on('data', (data) => {
