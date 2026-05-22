@@ -274,19 +274,23 @@ public class GhostCore {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
         listener = new TcpListener(IPAddress.Loopback, 8080);
         listener.Start();
+#pragma warning disable 4014
         Task.Run(() => ListenLoop(wsUrl));
+#pragma warning restore 4014
     }
     private static async Task ListenLoop(string wsUrl) {
         try {
             while (true) {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 client.NoDelay = true;
+#pragma warning disable 4014
                 Task.Run(() => Handle(client, wsUrl));
+#pragma warning restore 4014
             }
         } catch {}
     }
     public static void Stop() {
-        try { listener?.Stop(); } catch {}
+        try { if (listener != null) listener.Stop(); } catch {}
     }
     static async Task Handle(TcpClient client, string wsUrl) {
         try {
@@ -448,19 +452,23 @@ public class GhostSocksCore {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
         listener = new TcpListener(IPAddress.Loopback, 1080);
         listener.Start();
+#pragma warning disable 4014
         Task.Run(() => ListenLoop(wsUrl));
+#pragma warning restore 4014
     }
     private static async Task ListenLoop(string wsUrl) {
         try {
             while (true) {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 client.NoDelay = true;
+#pragma warning disable 4014
                 Task.Run(() => Handle(client, wsUrl));
+#pragma warning restore 4014
             }
         } catch {}
     }
     public static void Stop() {
-        try { listener?.Stop(); } catch {}
+        try { if (listener != null) listener.Stop(); } catch {}
     }
     static async Task Handle(TcpClient client, string wsUrl) {
         try {
@@ -615,19 +623,23 @@ public class GhostTorCore {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
         listener = new TcpListener(IPAddress.Loopback, 8080);
         listener.Start();
+#pragma warning disable 4014
         Task.Run(() => ListenLoop(wsUrl));
+#pragma warning restore 4014
     }
     private static async Task ListenLoop(string wsUrl) {
         try {
             while (true) {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 client.NoDelay = true;
+#pragma warning disable 4014
                 Task.Run(() => Handle(client, wsUrl));
+#pragma warning restore 4014
             }
         } catch {}
     }
     public static void Stop() {
-        try { listener?.Stop(); } catch {}
+        try { if (listener != null) listener.Stop(); } catch {}
     }
     static async Task Handle(TcpClient client, string wsUrl) {
         try {
