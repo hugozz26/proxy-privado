@@ -274,18 +274,14 @@ public class GhostCore {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
         listener = new TcpListener(IPAddress.Loopback, 8080);
         listener.Start();
-#pragma warning disable 4014
-        Task.Run(() => ListenLoop(wsUrl));
-#pragma warning restore 4014
+        var t1 = Task.Run(() => ListenLoop(wsUrl));
     }
     private static async Task ListenLoop(string wsUrl) {
         try {
             while (true) {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 client.NoDelay = true;
-#pragma warning disable 4014
-                Task.Run(() => Handle(client, wsUrl));
-#pragma warning restore 4014
+                var t2 = Task.Run(() => Handle(client, wsUrl));
             }
         } catch {}
     }
@@ -386,13 +382,16 @@ try {
     Set-ItemProperty -Path $reg -Name ProxyServer -Value "127.0.0.1:8080"
     Set-ItemProperty -Path $reg -Name ProxyOverride -Value "localhost;127.0.0.1;<local>;${hostUrl}"
     
-    Write-Host " Proxy In-Memory Rodando! Pressione QUALQUER TECLA para sair limpo." -ForegroundColor Cyan
-    
     [GhostCore]::Start($wsUrl)
+    
+    Write-Host " Proxy In-Memory Rodando! Pressione QUALQUER TECLA para sair limpo." -ForegroundColor Cyan
     while (-not [Console]::KeyAvailable) {
         Start-Sleep -Milliseconds 200
     }
     $null = [Console]::ReadKey($true)
+} catch {
+    Write-Host " Erro fatal ao iniciar o GhostProxy: $_" -ForegroundColor Red
+    Start-Sleep -Seconds 5
 } finally {
     Write-Host "\`n Limpando rastros e Restaurando Proxy..." -ForegroundColor Yellow
     [GhostCore]::Stop()
@@ -452,18 +451,14 @@ public class GhostSocksCore {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
         listener = new TcpListener(IPAddress.Loopback, 1080);
         listener.Start();
-#pragma warning disable 4014
-        Task.Run(() => ListenLoop(wsUrl));
-#pragma warning restore 4014
+        var t1 = Task.Run(() => ListenLoop(wsUrl));
     }
     private static async Task ListenLoop(string wsUrl) {
         try {
             while (true) {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 client.NoDelay = true;
-#pragma warning disable 4014
-                Task.Run(() => Handle(client, wsUrl));
-#pragma warning restore 4014
+                var t2 = Task.Run(() => Handle(client, wsUrl));
             }
         } catch {}
     }
@@ -554,12 +549,15 @@ Write-Host " SOCKS5 Habilitado na porta 1080!" -ForegroundColor Green
 
 [Console]::TreatControlCAsInput = $true
 try {
+    [GhostSocksCore]::Start($wsUrl)
+    
     Write-Host "  Abra o Proxifier, adicione o Proxy Local -> 127.0.0.1:1080 (SOCKS5)" -ForegroundColor Yellow
     Write-Host " Aguardando conexoes do Proxifier... Pressione QUALQUER TECLA para sair." -ForegroundColor Cyan
-    
-    [GhostSocksCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) { Start-Sleep -Milliseconds 200 }
     $null = [Console]::ReadKey($true)
+} catch {
+    Write-Host " Erro fatal ao iniciar o GhostSocks: $_" -ForegroundColor Red
+    Start-Sleep -Seconds 5
 } finally { 
     Write-Host "\`n Encerrando SOCKS5..." -ForegroundColor Yellow 
     [GhostSocksCore]::Stop()
@@ -621,20 +619,16 @@ public class GhostTorCore {
     private static TcpListener listener;
     public static void Start(string wsUrl) {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
-        listener = new TcpListener(IPAddress.Loopback, 8080);
+        listener = new TcpListener(IPAddress.Loopback, 8081);
         listener.Start();
-#pragma warning disable 4014
-        Task.Run(() => ListenLoop(wsUrl));
-#pragma warning restore 4014
+        var t1 = Task.Run(() => ListenLoop(wsUrl));
     }
     private static async Task ListenLoop(string wsUrl) {
         try {
             while (true) {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 client.NoDelay = true;
-#pragma warning disable 4014
-                Task.Run(() => Handle(client, wsUrl));
-#pragma warning restore 4014
+                var t2 = Task.Run(() => Handle(client, wsUrl));
             }
         } catch {}
     }
@@ -730,10 +724,12 @@ Write-Host " Acesso Autorizado! Modo Tor Injetado na Memoria..." -ForegroundColo
 $reg = "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
 
 try {
-    Write-Host "  Ativando Proxy Tor no Sistema (127.0.0.1:8080)" -ForegroundColor Yellow
+    Write-Host "  Ativando Proxy Tor no Sistema (127.0.0.1:8081)" -ForegroundColor Yellow
     Set-ItemProperty -Path $reg -Name ProxyEnable -Value 1
-    Set-ItemProperty -Path $reg -Name ProxyServer -Value "127.0.0.1:8080"
+    Set-ItemProperty -Path $reg -Name ProxyServer -Value "127.0.0.1:8081"
     Set-ItemProperty -Path $reg -Name ProxyOverride -Value "localhost;127.0.0.1;<local>;${hostUrl}"
+    
+    [GhostTorCore]::Start($wsUrl)
     
     Write-Host "" -ForegroundColor Cyan
     Write-Host " REDE TOR ATIVA! Navegacao 100% Anonima." -ForegroundColor Green
@@ -742,11 +738,13 @@ try {
     Write-Host ""
     Write-Host " Pressione QUALQUER TECLA para sair e restaurar a internet." -ForegroundColor Cyan
     
-    [GhostTorCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) {
         Start-Sleep -Milliseconds 200
     }
     $null = [Console]::ReadKey($true)
+} catch {
+    Write-Host " Erro fatal ao iniciar o GhostProxy Tor: $_" -ForegroundColor Red
+    Start-Sleep -Seconds 5
 } finally {
     Write-Host "\`n Limpando rastros e Restaurando Proxy..." -ForegroundColor Yellow
     [GhostTorCore]::Stop()
@@ -802,6 +800,27 @@ wss.on('connection', (ws, req) => {
             // ----- MODO TOR: Rota pela Rede Tor via SOCKS5 Local (porta 9050) -----
             if (isTorMode) {
                 console.log(`[Tor Proxy] Roteando via Rede Tor para: ${host}:${targetPort}`);
+                
+                let messageQueue = [];
+                let isReady = false;
+
+                // Captura qualquer dado inicial enviado pelo navegador antes do handshake com o Tor terminar!
+                ws.on('message', (data) => {
+                    if (isReady) {
+                        if (targetSocket && !targetSocket.destroyed) {
+                            const canWrite = targetSocket.write(data);
+                            if (!canWrite) {
+                                try { if (ws._socket && ws._socket.pause) ws._socket.pause(); } catch(e){}
+                                targetSocket.once('drain', () => {
+                                    try { if (ws._socket && ws._socket.resume) ws._socket.resume(); } catch(e){}
+                                });
+                            }
+                        }
+                    } else {
+                        messageQueue.push(data);
+                    }
+                });
+
                 connectThroughTor(host, targetPort, (err, torSock) => {
                     if (err) {
                         console.error(`[Tor] Falha ao conectar: ${err.message}`);
@@ -837,17 +856,14 @@ wss.on('connection', (ws, req) => {
 
                     targetSocket.on('close', () => { ws.close(); });
 
-                    ws.on('message', (data) => {
-                        if (targetSocket && !targetSocket.destroyed) {
-                            const canWrite = targetSocket.write(data);
-                            if (!canWrite) {
-                                try { if (ws._socket && ws._socket.pause) ws._socket.pause(); } catch(e){}
-                                targetSocket.once('drain', () => {
-                                    try { if (ws._socket && ws._socket.resume) ws._socket.resume(); } catch(e){}
-                                });
-                            }
+                    // Conexao pronta! Envia tudo o que estava em cache e abre o fluxo direto
+                    isReady = true;
+                    if (messageQueue.length > 0) {
+                        for (const msg of messageQueue) {
+                            targetSocket.write(msg);
                         }
-                    });
+                        messageQueue = [];
+                    }
                 });
                 return; // Nao cai no proxy normal abaixo
             }
