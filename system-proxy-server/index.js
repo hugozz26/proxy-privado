@@ -110,16 +110,21 @@ async function validateToken(clientToken, clientRG) {
         // Modo DEV local (ignora DB)
         return { ok: true };
     }
-    if (!clientToken || !clientRG) return { ok: false, msg: 'Missing Auth' };
+    if (!clientToken || !clientRG) {
+        console.log(`[Auth Falhou] Credenciais ausentes. Token: ${clientToken}, RG: ${clientRG}`);
+        return { ok: false, msg: 'Missing Auth' };
+    }
     const agora = Date.now();
 
     if (pcAutorizados.has(clientToken)) {
         const pcDaLista = pcAutorizados.get(clientToken);
         if (agora > pcDaLista.expiresAt) {
+            console.log(`[Auth Falhou] Token expirado no cache em memoria: ${clientToken}`);
             pcAutorizados.delete(clientToken);
             return { ok: false, msg: 'Token Expired In Cache' };
         }
         if (pcDaLista.rg !== clientRG) {
+            console.log(`[Auth Falhou] RG invalido no cache. Esperado: ${pcDaLista.rg}, Recebido: ${clientRG}`);
             return { ok: false, msg: 'RG Invalido' };
         }
         return { ok: true };
@@ -127,11 +132,20 @@ async function validateToken(clientToken, clientRG) {
 
     try {
         const tokenDoc = await db.collection('proxy_tokens').doc(clientToken).get();
-        if (!tokenDoc.exists) return { ok: false, msg: 'Invalid Token' };
+        if (!tokenDoc.exists) {
+            console.log(`[Auth Falhou] Token nao existe no Firebase Firestore: ${clientToken}`);
+            return { ok: false, msg: 'Invalid Token' };
+        }
 
         const data = tokenDoc.data();
-        if (agora > data.expiresAt) return { ok: false, msg: 'Token Expired' };
-        if (data.computadorRg && data.computadorRg !== clientRG) return { ok: false, msg: 'Token em uso por outro RG' };
+        if (agora > data.expiresAt) {
+            console.log(`[Auth Falhou] Token expirado no Firestore. Agora: ${agora}, Expira em: ${data.expiresAt}`);
+            return { ok: false, msg: 'Token Expired' };
+        }
+        if (data.computadorRg && data.computadorRg !== clientRG) {
+            console.log(`[Auth Falhou] Token em uso por outra maquina. Gravado no DB: ${data.computadorRg}, Enviado pelo cliente: ${clientRG}`);
+            return { ok: false, msg: 'Token em uso por outro RG' };
+        }
 
         if (!data.computadorRg) {
             await tokenDoc.ref.update({ computadorRg: clientRG });
@@ -143,6 +157,7 @@ async function validateToken(clientToken, clientRG) {
         });
         return { ok: true };
     } catch (err) {
+        console.error(`[Auth Erro] Falha ao acessar Firestore para o token ${clientToken}:`, err.message);
         return { ok: false, msg: 'Database Error' };
     }
 }
