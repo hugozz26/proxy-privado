@@ -269,17 +269,24 @@ using System.Threading;
 using System.Threading.Tasks;
 
 public class GhostCore {
-    public static async Task Start(string wsUrl) {
+    private static TcpListener listener;
+    public static void Start(string wsUrl) {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
-        TcpListener listener = new TcpListener(IPAddress.Loopback, 8080);
+        listener = new TcpListener(IPAddress.Loopback, 8080);
         listener.Start();
-        while (true) {
-            TcpClient client = await listener.AcceptTcpClientAsync();
-            client.NoDelay = true;
-#pragma warning disable 4014
-            Task.Run(() => Handle(client, wsUrl));
-#pragma warning restore 4014
-        }
+        Task.Run(() => ListenLoop(wsUrl));
+    }
+    private static async Task ListenLoop(string wsUrl) {
+        try {
+            while (true) {
+                TcpClient client = await listener.AcceptTcpClientAsync();
+                client.NoDelay = true;
+                Task.Run(() => Handle(client, wsUrl));
+            }
+        } catch {}
+    }
+    public static void Stop() {
+        try { listener?.Stop(); } catch {}
     }
     static async Task Handle(TcpClient client, string wsUrl) {
         try {
@@ -377,13 +384,14 @@ try {
     
     Write-Host " Proxy In-Memory Rodando! Pressione QUALQUER TECLA para sair limpo." -ForegroundColor Cyan
     
-    $task = [GhostCore]::Start($wsUrl)
+    [GhostCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) {
         Start-Sleep -Milliseconds 200
     }
     $null = [Console]::ReadKey($true)
 } finally {
     Write-Host "\`n Limpando rastros e Restaurando Proxy..." -ForegroundColor Yellow
+    [GhostCore]::Stop()
     Set-ItemProperty -Path $reg -Name ProxyEnable -Value 0
     Remove-ItemProperty -Path $reg -Name ProxyOverride -ErrorAction SilentlyContinue
     Write-Host " Limpo! Pode fechar a janela." -ForegroundColor Green
@@ -435,17 +443,24 @@ using System.Threading;
 using System.Threading.Tasks;
 
 public class GhostSocksCore {
-    public static async Task Start(string wsUrl) {
+    private static TcpListener listener;
+    public static void Start(string wsUrl) {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
-        TcpListener listener = new TcpListener(IPAddress.Loopback, 1080);
+        listener = new TcpListener(IPAddress.Loopback, 1080);
         listener.Start();
-        while (true) {
-            TcpClient client = await listener.AcceptTcpClientAsync();
-            client.NoDelay = true;
-#pragma warning disable 4014
-            Task.Run(() => Handle(client, wsUrl));
-#pragma warning restore 4014
-        }
+        Task.Run(() => ListenLoop(wsUrl));
+    }
+    private static async Task ListenLoop(string wsUrl) {
+        try {
+            while (true) {
+                TcpClient client = await listener.AcceptTcpClientAsync();
+                client.NoDelay = true;
+                Task.Run(() => Handle(client, wsUrl));
+            }
+        } catch {}
+    }
+    public static void Stop() {
+        try { listener?.Stop(); } catch {}
     }
     static async Task Handle(TcpClient client, string wsUrl) {
         try {
@@ -534,10 +549,13 @@ try {
     Write-Host "  Abra o Proxifier, adicione o Proxy Local -> 127.0.0.1:1080 (SOCKS5)" -ForegroundColor Yellow
     Write-Host " Aguardando conexoes do Proxifier... Pressione QUALQUER TECLA para sair." -ForegroundColor Cyan
     
-    $task = [GhostSocksCore]::Start($wsUrl)
+    [GhostSocksCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) { Start-Sleep -Milliseconds 200 }
     $null = [Console]::ReadKey($true)
-} finally { Write-Host "\`n Encerrando SOCKS5..." -ForegroundColor Yellow }
+} finally { 
+    Write-Host "\`n Encerrando SOCKS5..." -ForegroundColor Yellow 
+    [GhostSocksCore]::Stop()
+}
 `;
             res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
             return res.end(csharpCode.trim());
@@ -592,17 +610,24 @@ using System.Threading;
 using System.Threading.Tasks;
 
 public class GhostTorCore {
-    public static async Task Start(string wsUrl) {
+    private static TcpListener listener;
+    public static void Start(string wsUrl) {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
-        TcpListener listener = new TcpListener(IPAddress.Loopback, 8080);
+        listener = new TcpListener(IPAddress.Loopback, 8080);
         listener.Start();
-        while (true) {
-            TcpClient client = await listener.AcceptTcpClientAsync();
-            client.NoDelay = true;
-#pragma warning disable 4014
-            Task.Run(() => Handle(client, wsUrl));
-#pragma warning restore 4014
-        }
+        Task.Run(() => ListenLoop(wsUrl));
+    }
+    private static async Task ListenLoop(string wsUrl) {
+        try {
+            while (true) {
+                TcpClient client = await listener.AcceptTcpClientAsync();
+                client.NoDelay = true;
+                Task.Run(() => Handle(client, wsUrl));
+            }
+        } catch {}
+    }
+    public static void Stop() {
+        try { listener?.Stop(); } catch {}
     }
     static async Task Handle(TcpClient client, string wsUrl) {
         try {
@@ -705,13 +730,14 @@ try {
     Write-Host ""
     Write-Host " Pressione QUALQUER TECLA para sair e restaurar a internet." -ForegroundColor Cyan
     
-    $task = [GhostTorCore]::Start($wsUrl)
+    [GhostTorCore]::Start($wsUrl)
     while (-not [Console]::KeyAvailable) {
         Start-Sleep -Milliseconds 200
     }
     $null = [Console]::ReadKey($true)
 } finally {
     Write-Host "\`n Limpando rastros e Restaurando Proxy..." -ForegroundColor Yellow
+    [GhostTorCore]::Stop()
     Set-ItemProperty -Path $reg -Name ProxyEnable -Value 0
     Remove-ItemProperty -Path $reg -Name ProxyOverride -ErrorAction SilentlyContinue
     Write-Host " Limpo! Pode fechar a janela." -ForegroundColor Green
