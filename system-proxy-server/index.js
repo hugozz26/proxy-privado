@@ -580,7 +580,7 @@ try {
 
             const csharpCode = `
 # GhostProxy Tor Payload in C# Memory
-$wsUrl = "${wsProto}://${hostUrl}/socks-tor?token=${token}&rg=${rg}"
+$wsUrl = "${wsProto}://${hostUrl}/socks-tor?token=${token}&rg=${rg}&mode=tor"
 
 $code = @'
 using System;
@@ -746,7 +746,8 @@ const wss = new WebSocket.Server({
 });
 
 wss.on('connection', (ws, req) => {
-    const isTorMode = req.url.startsWith('/socks-tor');
+    const isTorMode = req.url.includes('socks-tor') || req.url.includes('mode=tor');
+    console.log(`[WebSocket] Nova conexao recebida. URL: ${req.url} (Tor Mode: ${isTorMode ? 'ATIVO' : 'DESATIVADO'})`);
     let targetSocket = null;
 
     // A primeira mensagem que o Cliente (.exe da escola) mandar vai ser o comando pra onde conectar
