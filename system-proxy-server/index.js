@@ -213,7 +213,11 @@ function connectThroughTor(host, port, callback) {
 const server = http.createServer(async (req, res) => {
     try {
         const hostUrl = req.headers.host || 'hackmail.eu.org';
-        const isLocal = hostUrl.includes('localhost') || hostUrl.includes('127.0.0.1');
+        const rawHost = hostUrl.split(':')[0];
+        const isIp = /^[0-9.]+$/.test(rawHost);
+        const isLocal = hostUrl.includes('localhost') || hostUrl.includes('127.0.0.1') || isIp;
+        
+        // Se for IP, localhost ou porta sem SSL, usa http/ws. Se for dominio na nuvem (Cloudflare), usa https/wss.
         const httpProto = isLocal ? 'http' : 'https';
         const wsProto = isLocal ? 'ws' : 'wss';
         
